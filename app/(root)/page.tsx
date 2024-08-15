@@ -1,10 +1,16 @@
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="p-4">
-      <Button>Click me</Button>
-    </div>
-  );
+import { useEffect } from "react";
+
+import { useStoreModal } from "@/hooks/use-store-modal";
+
+export default function SetupPage() {
+  const isOpen = useStoreModal(s => s.isOpen);
+  const onOpen = useStoreModal(s => s.onOpen);
+
+  useEffect(() => {
+    if (!isOpen) onOpen();
+  }, [isOpen, onOpen]);
+
+  return <div className="p-4">Root page</div>;
 }
