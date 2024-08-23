@@ -45,3 +45,11 @@ npx prisma db push
 ```
 
 This will update the database schema
+
+## Resetting the database
+
+To reset the database, run the following command:
+
+```
+npx prisma db reset
+```
