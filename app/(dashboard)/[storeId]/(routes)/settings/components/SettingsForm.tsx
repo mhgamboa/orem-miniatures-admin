@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input";
 import AlertModal from "@/components/modals/AlertModal";
 import ApiAlert from "@/components/ui/ApiAlert";
 
+import { useOrigin } from "@/hooks/useOrigin";
+
 type Props = {
   initialData: Store;
 };
@@ -35,6 +37,7 @@ export default function SettingsForm({ initialData }: Props) {
 
   const params = useParams();
   const router = useRouter();
+  const origin = useOrigin();
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(formSchema),
