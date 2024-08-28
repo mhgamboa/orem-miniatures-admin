@@ -51,7 +51,7 @@ export default function BillboardForm({ initialData }: Props) {
     defaultValues: initialData || { label: "", imageUrl: "" },
   });
 
-  const onsubmit = async (data: BillboardFormValues) => {
+  const onSubmit = async (data: BillboardFormValues) => {
     try {
       setLoading(true);
       initialData
@@ -59,6 +59,7 @@ export default function BillboardForm({ initialData }: Props) {
         : await axios.post(`/api/${params.storeId}/billboards`, data);
 
       router.refresh();
+      router.push(`/${params.storeId}/billboards`);
       toast.success(toastMessage, { position: "top-center" });
     } catch (error) {
       toast.error("Something went wrong");
@@ -95,7 +96,7 @@ export default function BillboardForm({ initialData }: Props) {
       </div>
       <Separator />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onsubmit)} className="space-y-8 w-full">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
           <FormField
             control={form.control}
             name="imageUrl"
