@@ -18,9 +18,6 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import AlertModal from "@/components/modals/AlertModal";
 import ImageUpload from "@/components/ui/ImageUpload";
-import ApiAlert from "@/components/ui/ApiAlert";
-
-import { useOrigin } from "@/hooks/useOrigin";
 
 type Props = {
   initialData: Billboard | null;
@@ -39,7 +36,6 @@ export default function BillboardForm({ initialData }: Props) {
 
   const params = useParams();
   const router = useRouter();
-  const origin = useOrigin();
 
   const title = initialData ? "Edit Billboard" : "Add Billboard";
   const description = initialData ? "Edit a billboard" : "Add a new billboard";
