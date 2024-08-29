@@ -24,7 +24,6 @@ export default async function Page({ params }: Props) {
     label: billboard.label,
     createdAt: format(billboard.createdAt, "MMMM do, yyyy"),
   }));
-  console.log(formattedBillboards);
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-1 p-8 pt-6">

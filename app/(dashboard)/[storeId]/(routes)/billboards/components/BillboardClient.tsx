@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Heading from "@/components/ui/Heading";
+import ApiList from "@/components/ui/ApiList";
 
 import { BillboardColumn, columns } from "./columns";
 import { DataTable } from "@/components/ui/DataTable";
@@ -28,6 +29,9 @@ export default function client({ data }: Props) {
       </div>
       <Separator />
       <DataTable searchKey="label" columns={columns} data={data} />
+      <Heading title="API" description="API calls for Billboards" />
+      <Separator />
+      <ApiList entityName="billboards" entityIdName="billboardId" />
     </>
   );
 }
