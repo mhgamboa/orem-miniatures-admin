@@ -1,22 +1,22 @@
 "use client";
 import React from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Billboard } from "@prisma/client";
 
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-
 import Heading from "@/components/ui/Heading";
 
+import { BillboardColumn, columns } from "./columns";
+import { DataTable } from "@/components/ui/DataTable";
+
 type Props = {
-  data: Billboard[];
+  data: BillboardColumn[];
 };
 
 export default function client({ data }: Props) {
   const router = useRouter();
   const params = useParams();
-
   return (
     <>
       <div className="flex items-center justify-between">
@@ -27,6 +27,7 @@ export default function client({ data }: Props) {
         </Button>
       </div>
       <Separator />
+      <DataTable searchKey="label" columns={columns} data={data} />
     </>
   );
 }
