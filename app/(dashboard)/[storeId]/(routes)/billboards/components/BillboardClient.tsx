@@ -15,7 +15,7 @@ type Props = {
   data: BillboardColumn[];
 };
 
-export default function client({ data }: Props) {
+export default function BillboardClient({ data }: Props) {
   const router = useRouter();
   const params = useParams();
   return (
