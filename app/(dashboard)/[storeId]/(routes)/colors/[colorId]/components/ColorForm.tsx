@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-import { Billboard, Category } from "@prisma/client";
+import { Color } from "@prisma/client";
 import { toast } from "sonner";
 
 import { useForm } from "react-hook-form";
@@ -17,46 +17,45 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import AlertModal from "@/components/modals/AlertModal";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ImageUpload from "@/components/ui/ImageUpload";
 
 type Props = {
-  initialData: Category | null;
-  billboards: Billboard[];
+  initialData: Color | null;
 };
 
 const formSchema = z.object({
   name: z.string().min(1),
-  billboardId: z.string().min(1),
+  value: z.string().min(4).regex(/^#/, { message: "String must be a valid hex code" }),
 });
 
-type CategoryFormValues = z.infer<typeof formSchema>;
+type ColorFormValues = z.infer<typeof formSchema>;
 
-export default function CategoryForm({ initialData, billboards }: Props) {
+export default function ColorForm({ initialData }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const params = useParams();
   const router = useRouter();
 
-  const title = initialData ? "Edit Category" : "Add Category";
-  const description = initialData ? "Edit a category" : "Add a new category";
-  const toastMessage = initialData ? "Category updated" : "Category created";
-  const action = initialData ? "Save Changes" : "Create Category";
+  const title = initialData ? "Edit Colors" : "Add Colors";
+  const description = initialData ? "Edit a color" : "Add a new color";
+  const toastMessage = initialData ? "Colors updated" : "Colors created";
+  const action = initialData ? "Save Changes" : "Create Colors";
 
-  const form = useForm<CategoryFormValues>({
+  const form = useForm<ColorFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || { name: "", billboardId: "" },
+    defaultValues: initialData || { name: "", value: "" },
   });
 
-  const onSubmit = async (data: CategoryFormValues) => {
+  const onSubmit = async (data: ColorFormValues) => {
     try {
       setLoading(true);
       initialData
-        ? await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, data)
-        : await axios.post(`/api/${params.storeId}/categories`, data);
+        ? await axios.patch(`/api/${params.storeId}/colors/${params.colorId}`, data)
+        : await axios.post(`/api/${params.storeId}/colors`, data);
 
       router.refresh();
-      router.push(`/${params.storeId}/categories`);
+      router.push(`/${params.storeId}/colors`);
       toast.success(toastMessage, { position: "top-center" });
     } catch (error) {
       toast.error("Something went wrong");
@@ -68,12 +67,12 @@ export default function CategoryForm({ initialData, billboards }: Props) {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`);
+      await axios.delete(`/api/${params.storeId}/colors/${params.sizeId}`);
       router.refresh();
-      router.push(`/${params.storeId}/categories`);
-      toast.success("Category deleted", { position: "top-center" });
+      router.push(`/${params.storeId}/colors`);
+      toast.success("Color deleted", { position: "top-center" });
     } catch (error) {
-      toast.error("Make sure you removed all products using this category first");
+      toast.error("Make sure you removed all products using this color first");
     } finally {
       setLoading(false);
       setOpen(false);
@@ -103,7 +102,7 @@ export default function CategoryForm({ initialData, billboards }: Props) {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input disabled={loading} placeholder="Category name" {...field} />
+                      <Input disabled={loading} placeholder="Color Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,25 +111,17 @@ export default function CategoryForm({ initialData, billboards }: Props) {
             />
             <FormField
               control={form.control}
-              name="billboardId"
+              name="value"
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Billboard</FormLabel>
-                    <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue defaultValue={field.value} placeholder="Select a billboard" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {billboards.map(billboard => (
-                          <SelectItem key={billboard.id} value={billboard.id}>
-                            {billboard.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormLabel>Value</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center gap-x-4">
+                        <Input disabled={loading} placeholder="Color Value" {...field} />
+                        <div className="border p-4 rounded-full" style={{ backgroundColor: field.value }} />
+                      </div>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 );
