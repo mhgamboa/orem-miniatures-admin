@@ -78,6 +78,15 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
       initialData
         ? await axios.patch(`/api/${params.storeId}/products/${params.productId}`, data)
         : await axios.post(`/api/${params.storeId}/products`, data);
+      // Rewriitten wiothout axios
+      // const response = await fetch(`/api/${params.storeId}/products/${params.productId}`, {
+      //   method: initialData ? "PATCH" : "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(data),
+      // });
+      // const data = await response.json();
 
       router.refresh();
       router.push(`/${params.storeId}/products`);
