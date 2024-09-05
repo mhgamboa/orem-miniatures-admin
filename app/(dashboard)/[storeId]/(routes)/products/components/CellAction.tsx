@@ -42,7 +42,7 @@ export default function CellAction({ data }: Props) {
       router.refresh();
       toast.success("Billboard deleted", { position: "top-center" });
     } catch (error) {
-      toast.error("Make sure you removed all categories using this product first");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
       setOpen(false);

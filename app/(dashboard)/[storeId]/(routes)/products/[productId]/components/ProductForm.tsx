@@ -54,6 +54,7 @@ const formSchema = z.object({
 type ProductFormValues = z.infer<typeof formSchema>;
 
 export default function ProductForm({ initialData, categories, sizes, colors }: Props) {
+  console.log("product form");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -75,6 +76,7 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
   const onSubmit = async (data: ProductFormValues) => {
     try {
       setLoading(true);
+      console.log(data);
       initialData
         ? await axios.patch(`/api/${params.storeId}/products/${params.productId}`, data)
         : await axios.post(`/api/${params.storeId}/products`, data);
@@ -236,7 +238,7 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Size</FormLabel>
+                    <FormLabel>Color</FormLabel>
                     <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
