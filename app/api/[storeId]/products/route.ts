@@ -25,7 +25,7 @@ export async function POST(req: Request, { params }: { params: { storeId: string
     const product = await prismaDb.product.create({
       data: {
         name,
-        Image: {
+        images: {
           createMany: {
             data: [...images.map((image: { url: string }) => image)],
           },
@@ -60,7 +60,7 @@ export async function GET(req: Request, { params }: { params: { storeId: string 
 
     const products = await prismaDb.product.findMany({
       where: { storeId: params.storeId, categoryId, sizeId, colorId, isFeatured: isFeatured ? true : undefined, isArchived: false },
-      include: { Image: true, category: true, size: true, color: true },
+      include: { images: true, category: true, size: true, color: true },
       orderBy: { createdAt: "desc" },
     });
 

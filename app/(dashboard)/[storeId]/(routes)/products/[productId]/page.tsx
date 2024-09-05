@@ -7,7 +7,7 @@ export default async function ProductPage({ params }: { params: { productId: str
     where: {
       id: params.productId,
     },
-    include: { Image: true },
+    include: { images: true },
   });
 
   const categories = await prismaDb.category.findMany({

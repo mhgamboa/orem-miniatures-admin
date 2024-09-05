@@ -16,11 +16,11 @@ import { Button } from "@/components/ui/button";
 
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 
-import { BillboardColumn } from "./columns";
+import { ProductColumn } from "./columns";
 import AlertModal from "@/components/modals/AlertModal";
 
 type Props = {
-  data: BillboardColumn;
+  data: ProductColumn;
 };
 
 export default function CellAction({ data }: Props) {
@@ -38,11 +38,11 @@ export default function CellAction({ data }: Props) {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
+      await axios.delete(`/api/${params.storeId}/products/${data.id}`);
       router.refresh();
       toast.success("Billboard deleted", { position: "top-center" });
     } catch (error) {
-      toast.error("Make sure you removed all categories using this billboard first");
+      toast.error("Make sure you removed all categories using this product first");
     } finally {
       setLoading(false);
       setOpen(false);
@@ -65,7 +65,7 @@ export default function CellAction({ data }: Props) {
             <Copy className="mr-2 h-4 w-4" />
             Copy Id
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/billboards/${data.id}`)}>
+          <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/products/${data.id}`)}>
             <Edit className="mr-2 h-4 w-4" />
             Update
           </DropdownMenuItem>

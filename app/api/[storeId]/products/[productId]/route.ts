@@ -12,7 +12,7 @@ export async function GET(_req: Request, { params }: { params: Params }) {
       where: {
         id: params.productId,
       },
-      include: { Image: true, category: true, size: true, color: true },
+      include: { images: true, category: true, size: true, color: true },
     });
 
     return NextResponse.json(product);
@@ -57,7 +57,7 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
         categoryId,
         colorId,
         sizeId,
-        Image: {
+        images: {
           deleteMany: {},
         },
         isFeatured,
@@ -70,7 +70,7 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
         id: params.productId,
       },
       data: {
-        Image: {
+        images: {
           createMany: {
             data: [...images.map((image: { url: string }) => image)],
           },
