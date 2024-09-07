@@ -107,7 +107,7 @@ export default function SettingsForm({ initialData }: Props) {
         </form>
       </Form>
       <Separator />
-      <ApiAlert title="NEXT_PUBLIC_API_URL" description={`${origin}/api/stores/${params.storeId}`} variant="public" />
+      <ApiAlert title="NEXT_PUBLIC_API_URL" description={`${origin}/api/${params.storeId}`} variant="public" />
     </>
   );
 }
