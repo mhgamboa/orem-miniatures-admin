@@ -52,8 +52,8 @@ export default function SizeForm({ initialData }: Props) {
       setLoading(true);
       initialData ? await axios.patch(`/api/${params.storeId}/sizes/${params.sizeId}`, data) : await axios.post(`/api/${params.storeId}/sizes`, data);
 
-      router.refresh();
       router.push(`/${params.storeId}/sizes`);
+      router.refresh();
       toast.success(toastMessage, { position: "top-center" });
     } catch (error) {
       toast.error("Something went wrong");
@@ -66,8 +66,8 @@ export default function SizeForm({ initialData }: Props) {
     try {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/sizes/${params.sizeId}`);
-      router.refresh();
       router.push(`/${params.storeId}/sizes`);
+      router.refresh();
       toast.success("Size deleted", { position: "top-center" });
     } catch (error) {
       toast.error("Make sure you removed all products using this size first");

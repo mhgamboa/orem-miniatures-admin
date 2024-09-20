@@ -19,7 +19,7 @@ export default async function Page({ params }: Props) {
     include: {
       category: true,
       size: true,
-      color: true,
+      designer: true,
     },
     orderBy: {
       createdAt: "desc",
@@ -34,7 +34,7 @@ export default async function Page({ params }: Props) {
     price: formatter.format(product.price.toNumber()),
     category: product.category?.name,
     size: product.size?.name,
-    color: product.color?.name,
+    designer: product.designer?.name,
     createdAt: format(product.createdAt, "MMMM do, yyyy"),
   }));
   return (

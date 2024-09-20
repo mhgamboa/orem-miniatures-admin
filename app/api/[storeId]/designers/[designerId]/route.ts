@@ -2,21 +2,21 @@ import prismaDb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-type Params = { storeId: string; colorId: string };
+type Params = { storeId: string; designerId: string };
 
 export async function GET(_req: Request, { params }: { params: Params }) {
   try {
-    if (!params.colorId) return new NextResponse("Color ID is required", { status: 400 });
+    if (!params.designerId) return new NextResponse("Designer ID is required", { status: 400 });
 
-    const color = await prismaDb.color.findUnique({
+    const designer = await prismaDb.designer.findUnique({
       where: {
-        id: params.colorId,
+        id: params.designerId,
       },
     });
 
-    return NextResponse.json(color);
+    return NextResponse.json(designer);
   } catch (e) {
-    console.log("[COLOR_GET]", e);
+    console.log("[DESIGNER_GET]", e);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
@@ -27,7 +27,7 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
     if (!userId) return new NextResponse("Unauthorized", { status: 401 });
 
     const body = await req.json();
-    const { name, value } = body;
+    const { name, website, patreon } = body;
     const storeByUserId = await prismaDb.store.findFirst({
       where: {
         id: params.storeId,
@@ -36,28 +36,28 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
     });
 
     if (!name) return new NextResponse("Label is required", { status: 400 });
-    if (!value) return new NextResponse("Image URL is required", { status: 400 });
-    if (!params.colorId) return new NextResponse("Color ID is required", { status: 400 });
+    if (!website) return new NextResponse("Website is required", { status: 400 });
+    if (!params.designerId) return new NextResponse("Designer ID is required", { status: 400 });
     if (!storeByUserId) return new NextResponse("Unauthrozied", { status: 403 });
 
-    const color = await prismaDb.color.updateMany({
+    const designer = await prismaDb.designer.updateMany({
       where: {
-        id: params.colorId,
+        id: params.designerId,
       },
       data: {
         name,
-        value,
+        website,
+        patreon,
       },
     });
 
-    return NextResponse.json(color);
+    return NextResponse.json(designer);
   } catch (e) {
-    console.log("[COLOR_PATCH]", e);
+    console.log("[DESIGNER_PATCH]", e);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
 
-// Req is required as Params is only available as the 2nd argument
 export async function DELETE(_req: Request, { params }: { params: Params }) {
   try {
     const { userId } = auth();
@@ -70,18 +70,18 @@ export async function DELETE(_req: Request, { params }: { params: Params }) {
       },
     });
 
-    if (!params.colorId) return new NextResponse("Color ID is required", { status: 400 });
+    if (!params.designerId) return new NextResponse("Designer ID is required", { status: 400 });
     if (!storeByUserId) return new NextResponse("Unauthrozied", { status: 403 });
 
-    const color = await prismaDb.color.deleteMany({
+    const color = await prismaDb.designer.deleteMany({
       where: {
-        id: params.colorId,
+        id: params.designerId,
       },
     });
 
     return NextResponse.json(color);
   } catch (e) {
-    console.log("[COLOR_DELETE]", e);
+    console.log("[DESIGNER_DELETE]", e);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }

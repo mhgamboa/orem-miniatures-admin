@@ -55,8 +55,8 @@ export default function CategoryForm({ initialData, billboards }: Props) {
         ? await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, data)
         : await axios.post(`/api/${params.storeId}/categories`, data);
 
-      router.refresh();
       router.push(`/${params.storeId}/categories`);
+      router.refresh();
       toast.success(toastMessage, { position: "top-center" });
     } catch (error) {
       toast.error("Something went wrong");
@@ -69,8 +69,8 @@ export default function CategoryForm({ initialData, billboards }: Props) {
     try {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`);
-      router.refresh();
       router.push(`/${params.storeId}/categories`);
+      router.refresh();
       toast.success("Category deleted", { position: "top-center" });
     } catch (error) {
       toast.error("Make sure you removed all products using this category first");

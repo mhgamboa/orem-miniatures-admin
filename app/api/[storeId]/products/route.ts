@@ -8,7 +8,7 @@ export async function POST(req: Request, { params }: { params: { storeId: string
     if (!userId) return new NextResponse("Unauthenticated", { status: 401 });
 
     const body = await req.json();
-    const { name, price, images, categoryId, colorId, sizeId, isFeatured, isArchived } = body;
+    const { name, price, images, categoryId, designerId, sizeId, isFeatured, isArchived } = body;
     const storeByUserId = await prismaDb.store.findFirst({
       where: { id: params.storeId, userId },
     });
@@ -17,7 +17,7 @@ export async function POST(req: Request, { params }: { params: { storeId: string
     if (!images || !images.length) return new NextResponse("images are required", { status: 400 });
     if (!price) return new NextResponse("price is required", { status: 400 });
     if (!categoryId) return new NextResponse("categoryId is required", { status: 400 });
-    if (!colorId) return new NextResponse("colorId is required", { status: 400 });
+    if (!designerId) return new NextResponse("designerId is required", { status: 400 });
     if (!sizeId) return new NextResponse("sizeId is required", { status: 400 });
     if (!params.storeId) return new NextResponse("storeId is required", { status: 400 });
     if (!storeByUserId) return new NextResponse("Unauthorized", { status: 403 });
@@ -32,7 +32,7 @@ export async function POST(req: Request, { params }: { params: { storeId: string
         },
         price,
         categoryId,
-        colorId,
+        designerId,
         sizeId,
         isFeatured,
         isArchived,
@@ -53,14 +53,21 @@ export async function GET(req: Request, { params }: { params: { storeId: string 
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get("categoryId") || undefined;
     const sizeId = searchParams.get("sizeId") || undefined;
-    const colorId = searchParams.get("colorId") || undefined;
+    const designerId = searchParams.get("designerId") || undefined;
     const isFeatured = searchParams.get("isFeatured");
 
     if (!params.storeId) return new NextResponse("storeId is required", { status: 400 });
 
     const products = await prismaDb.product.findMany({
-      where: { storeId: params.storeId, categoryId, sizeId, colorId, isFeatured: isFeatured ? true : undefined, isArchived: false },
-      include: { images: true, category: true, size: true, color: true },
+      where: {
+        storeId: params.storeId,
+        categoryId,
+        sizeId,
+        designerId,
+        isFeatured: isFeatured ? true : undefined,
+        isArchived: false,
+      },
+      include: { images: true, category: true, size: true, designer: true },
       orderBy: { createdAt: "desc" },
     });
 

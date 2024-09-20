@@ -16,11 +16,11 @@ import { Button } from "@/components/ui/button";
 
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
 
-import { ColorColumn } from "./columns";
+import { DesignerColumn } from "./columns";
 import AlertModal from "@/components/modals/AlertModal";
 
 type Props = {
-  data: ColorColumn;
+  data: DesignerColumn;
 };
 
 export default function CellAction({ data }: Props) {
@@ -32,18 +32,18 @@ export default function CellAction({ data }: Props) {
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success("Color Id copied to clipboard", { position: "top-center" });
+    toast.success("Designer Id copied to clipboard", { position: "top-center" });
   };
 
   const onDelete = async () => {
     try {
       setLoading(true);
       console.log("cell action");
-      await axios.delete(`/api/${params.storeId}/colors/${data.id}`);
+      await axios.delete(`/api/${params.storeId}/designers/${data.id}`);
       router.refresh();
-      toast.success("Color deleted", { position: "top-center" });
+      toast.success("Designer deleted", { position: "top-center" });
     } catch (error) {
-      toast.error("Make sure you removed all products using this color first");
+      toast.error("Make sure you removed all products using this designer first");
     } finally {
       setLoading(false);
       setOpen(false);
@@ -66,7 +66,7 @@ export default function CellAction({ data }: Props) {
             <Copy className="mr-2 h-4 w-4" />
             Copy Id
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/colors/${data.id}`)}>
+          <DropdownMenuItem onClick={() => router.push(`/${params.storeId}/designers/${data.id}`)}>
             <Edit className="mr-2 h-4 w-4" />
             Update
           </DropdownMenuItem>

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-import { Product, Image, Category, Size, Color } from "@prisma/client";
+import { Product, Image, Category, Size, Designer } from "@prisma/client";
 import { toast } from "sonner";
 
 import { useForm } from "react-hook-form";
@@ -11,8 +11,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Trash } from "lucide-react";
 
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Heading from "@/components/ui/Heading";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -25,7 +39,7 @@ type Props = {
   initialData: Product | null;
   categories: Category[];
   sizes: Size[];
-  colors: Color[];
+  designers: Designer[];
 };
 
 // interface Props {
@@ -46,14 +60,14 @@ const formSchema = z.object({
   price: z.coerce.number().min(1),
   categoryId: z.string().min(1),
   sizeId: z.string().min(1),
-  colorId: z.string().min(1),
+  designerId: z.string().min(1),
   isFeatured: z.boolean(),
   isArchived: z.boolean(),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
 
-export default function ProductForm({ initialData, categories, sizes, colors }: Props) {
+export default function ProductForm({ initialData, categories, sizes, designers }: Props) {
   console.log("product form");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -70,7 +84,16 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
     resolver: zodResolver(formSchema),
     defaultValues: initialData
       ? { ...initialData, price: parseFloat(String(initialData.price)) }
-      : { name: "", images: [], price: 0, categoryId: "", sizeId: "", colorId: "", isFeatured: false, isArchived: false },
+      : {
+          name: "",
+          images: [],
+          price: 0,
+          categoryId: "",
+          sizeId: "",
+          designerId: "",
+          isFeatured: false,
+          isArchived: false,
+        },
   });
 
   const onSubmit = async (data: ProductFormValues) => {
@@ -90,8 +113,8 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
       // });
       // const data = await response.json();
 
-      router.refresh();
       router.push(`/${params.storeId}/products`);
+      router.refresh();
       toast.success(toastMessage, { position: "top-center" });
     } catch (error) {
       toast.error("Something went wrong");
@@ -104,8 +127,8 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
     try {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
-      router.refresh();
       router.push(`/${params.storeId}/products`);
+      router.refresh();
       toast.success("Product deleted", { position: "top-center" });
     } catch (error) {
       toast.error("Something went wrong");
@@ -117,7 +140,12 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
 
   return (
     <>
-      <AlertModal isOpen={open} onClose={() => setOpen(false)} onConfirm={() => onDelete()} loading={loading} />
+      <AlertModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={() => onDelete()}
+        loading={loading}
+      />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
@@ -141,7 +169,9 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
                       value={field.value.map(image => image.url)}
                       disabled={loading}
                       onChange={url => field.onChange([...field.value, { url }])}
-                      onRemove={url => field.onChange([...field.value.filter(current => current.url !== url)])}
+                      onRemove={url =>
+                        field.onChange([...field.value.filter(current => current.url !== url)])
+                      }
                     />
                   </FormControl>
                   <FormMessage />
@@ -187,7 +217,12 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
                 return (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
-                    <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                    <Select
+                      disabled={loading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue defaultValue={field.value} placeholder="Select a category" />
@@ -213,7 +248,12 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
                 return (
                   <FormItem>
                     <FormLabel>Size</FormLabel>
-                    <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                    <Select
+                      disabled={loading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue defaultValue={field.value} placeholder="Select a size" />
@@ -234,21 +274,26 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
             />
             <FormField
               control={form.control}
-              name="colorId"
+              name="designerId"
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Color</FormLabel>
-                    <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
+                    <FormLabel>Designer</FormLabel>
+                    <Select
+                      disabled={loading}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue defaultValue={field.value} placeholder="Select a color" />
+                          <SelectValue defaultValue={field.value} placeholder="Select a designer" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {colors.map(color => (
-                          <SelectItem key={color.id} value={color.id}>
-                            {color.name}
+                        {designers.map(designer => (
+                          <SelectItem key={designer.id} value={designer.id}>
+                            {designer.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -286,7 +331,9 @@ export default function ProductForm({ initialData, categories, sizes, colors }: 
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel>Archived</FormLabel>
-                      <FormDescription>This product will not appear anywhere in the store</FormDescription>
+                      <FormDescription>
+                        This product will not appear anywhere in the store
+                      </FormDescription>
                     </div>
                   </FormItem>
                 );

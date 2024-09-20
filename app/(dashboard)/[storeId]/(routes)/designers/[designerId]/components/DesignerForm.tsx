@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-import { Color } from "@prisma/client";
+import { Designer } from "@prisma/client";
 import { toast } from "sonner";
 
 import { useForm } from "react-hook-form";
@@ -11,51 +11,64 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Trash } from "lucide-react";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import Heading from "@/components/ui/Heading";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import AlertModal from "@/components/modals/AlertModal";
-import ImageUpload from "@/components/ui/ImageUpload";
 
 type Props = {
-  initialData: Color | null;
+  initialData: Designer | null;
 };
 
 const formSchema = z.object({
   name: z.string().min(1),
-  value: z.string().min(4).regex(/^#/, { message: "String must be a valid hex code" }),
+  website: z.string().nullable(),
+  patreon: z.string().nullable(),
 });
 
-type ColorFormValues = z.infer<typeof formSchema>;
+type DesignerFormValues = z.infer<typeof formSchema>;
 
-export default function ColorForm({ initialData }: Props) {
+export default function DesignerForm({ initialData }: Props) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const params = useParams();
   const router = useRouter();
 
-  const title = initialData ? "Edit Colors" : "Add Colors";
-  const description = initialData ? "Edit a color" : "Add a new color";
-  const toastMessage = initialData ? "Colors updated" : "Colors created";
-  const action = initialData ? "Save Changes" : "Create Colors";
+  const title = initialData ? "Edit Designers" : "Add Designers";
+  const description = initialData ? "Edit a designer" : "Add a new designer";
+  const toastMessage = initialData ? "Designers updated" : "Designers created";
+  const action = initialData ? "Save Changes" : "Create Designers";
 
-  const form = useForm<ColorFormValues>({
+  const form = useForm<DesignerFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || { name: "", value: "" },
+    defaultValues: initialData || { name: "", patreon: "", website: "" },
   });
 
-  const onSubmit = async (data: ColorFormValues) => {
+  const onSubmit = async (data: DesignerFormValues) => {
     try {
       setLoading(true);
+      const { patreon, website } = data;
+      const formattedData = {
+        ...data,
+        patreon: patreon === "" ? null : patreon,
+        website: website === "" ? null : website,
+      };
       initialData
-        ? await axios.patch(`/api/${params.storeId}/colors/${params.colorId}`, data)
-        : await axios.post(`/api/${params.storeId}/colors`, data);
+        ? await axios.patch(`/api/${params.storeId}/designers/${params.designerId}`, formattedData)
+        : await axios.post(`/api/${params.storeId}/designers`, formattedData);
 
+      router.push(`/${params.storeId}/designers`);
       router.refresh();
-      router.push(`/${params.storeId}/colors`);
       toast.success(toastMessage, { position: "top-center" });
     } catch (error) {
       toast.error("Something went wrong");
@@ -67,12 +80,12 @@ export default function ColorForm({ initialData }: Props) {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/colors/${params.sizeId}`);
+      await axios.delete(`/api/${params.storeId}/designers/${params.designerId}`);
+      router.push(`/${params.storeId}/designers`);
       router.refresh();
-      router.push(`/${params.storeId}/colors`);
-      toast.success("Color deleted", { position: "top-center" });
+      toast.success("Designer deleted", { position: "top-center" });
     } catch (error) {
-      toast.error("Make sure you removed all products using this color first");
+      toast.error("Make sure you removed all products using this designer first");
     } finally {
       setLoading(false);
       setOpen(false);
@@ -81,7 +94,12 @@ export default function ColorForm({ initialData }: Props) {
 
   return (
     <>
-      <AlertModal isOpen={open} onClose={() => setOpen(false)} onConfirm={() => onDelete()} loading={loading} />
+      <AlertModal
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={() => onDelete()}
+        loading={loading}
+      />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
@@ -102,7 +120,7 @@ export default function ColorForm({ initialData }: Props) {
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input disabled={loading} placeholder="Color Name" {...field} />
+                      <Input disabled={loading} placeholder="Designer Name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -111,16 +129,38 @@ export default function ColorForm({ initialData }: Props) {
             />
             <FormField
               control={form.control}
-              name="value"
+              name="website"
               render={({ field }) => {
                 return (
                   <FormItem>
-                    <FormLabel>Value</FormLabel>
+                    <FormLabel>Website</FormLabel>
                     <FormControl>
-                      <div className="flex items-center gap-x-4">
-                        <Input disabled={loading} placeholder="Color Value" {...field} />
-                        <div className="border p-4 rounded-full" style={{ backgroundColor: field.value }} />
-                      </div>
+                      <Input
+                        disabled={loading}
+                        placeholder="Website"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+            <FormField
+              control={form.control}
+              name="patreon"
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <FormLabel>Patreon</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={loading}
+                        placeholder="Patreon"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
