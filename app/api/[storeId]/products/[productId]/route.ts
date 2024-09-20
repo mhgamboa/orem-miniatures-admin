@@ -12,7 +12,7 @@ export async function GET(_req: Request, { params }: { params: Params }) {
       where: {
         id: params.productId,
       },
-      include: { images: true, category: true, size: true, color: true },
+      include: { images: true, category: true, size: true, designer: true },
     });
 
     return NextResponse.json(product);
@@ -36,13 +36,13 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
     });
 
     const body = await req.json();
-    const { name, price, images, categoryId, colorId, sizeId, isFeatured, isArchived } = body;
+    const { name, price, images, categoryId, designerId, sizeId, isFeatured, isArchived } = body;
 
     if (!name) return new NextResponse("Name is required", { status: 400 });
     if (!images || !images.length) return new NextResponse("images are required", { status: 400 });
     if (!price) return new NextResponse("Price is required", { status: 400 });
     if (!categoryId) return new NextResponse("Category ID is required", { status: 400 });
-    if (!colorId) return new NextResponse("Color ID is required", { status: 400 });
+    if (!designerId) return new NextResponse("Designer ID is required", { status: 400 });
     if (!sizeId) return new NextResponse("Size ID is required", { status: 400 });
     if (!params.storeId) return new NextResponse("Store ID is required", { status: 400 });
     if (!storeByUserId) return new NextResponse("Unauthrozied", { status: 403 });
@@ -55,7 +55,7 @@ export async function PATCH(req: Request, { params }: { params: Params }) {
         name,
         price,
         categoryId,
-        colorId,
+        designerId,
         sizeId,
         images: {
           deleteMany: {},
